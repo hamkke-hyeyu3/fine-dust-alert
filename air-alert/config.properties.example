@@ -1,0 +1,12 @@
+# air-alert 설정 템플릿
+# 실제 사용 시 이 파일을 복사해서 `config.properties`로 저장하고 값을 채워넣으세요.
+# `config.properties`는 .gitignore에 등록되어 있어 레포에 올라가지 않습니다.
+
+# 에어코리아 OpenAPI 서비스 키 (https://www.data.go.kr)
+airkorea.serviceKey=YOUR_SERVICE_KEY_HERE
+
+# 조회할 측정소 이름 (예: 강남대로)
+airkorea.stationName=강남대로
+
+# Mattermost Incoming Webhook URL
+mattermost.webhookUrl=https://your.mattermost.host/hooks/XXXXXXXXXXXXXXXX

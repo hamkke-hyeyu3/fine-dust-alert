@@ -1,0 +1,29 @@
+# ── Eclipse workspace metadata (절대 공유 금지) ──
+/.metadata/
+.recommenders/
+
+# ── Build output / artifacts ──
+bin/
+build/
+out/
+target/
+*.class
+*.jar
+*.war
+
+# ── Logs & runtime state ──
+*.log
+
+# ── OS / Editor 부산물 ──
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.vscode/
+.idea/
+*.iml
+.claude/
+
+# ── 민감정보 ──
+/air-alert/config.properties
+.env
