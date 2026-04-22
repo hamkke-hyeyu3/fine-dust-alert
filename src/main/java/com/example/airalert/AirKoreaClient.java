@@ -70,7 +70,14 @@ public class AirKoreaClient {
                 throw new RuntimeException("에어코리아 API 호출 실패. HTTP CODE: " + responseCode);
             }
 
-            return parseAirData(response);
+            try {
+                return parseAirData(response);
+            } catch (RuntimeException e) {
+                System.err.println("[파싱 실패] 사유: " + e.getMessage());
+                System.err.println("[파싱 실패] HTTP 상태: " + responseCode);
+                System.err.println("[파싱 실패] 응답내용: " + abbreviate(response, 1000));
+                throw e;
+            }
         } finally {
             conn.disconnect();
         }

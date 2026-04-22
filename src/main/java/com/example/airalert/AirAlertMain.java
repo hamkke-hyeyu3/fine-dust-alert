@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -37,9 +40,11 @@ public class AirAlertMain {
         } catch (Exception e) {
             e.printStackTrace();
 
-            String errorMessage = "[역삼동 미세먼지 알림]\n"
+            String reason = e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage();
+            String errorMessage = "[" + stationName + " 미세먼지 알림]\n"
                     + "현재 측정값을 확인할 수 없습니다.\n"
-                    + "측정소 점검 또는 데이터 수집 지연 가능성이 있습니다.";
+                    + "측정소 점검 또는 데이터 수집 지연 가능성이 있습니다.\n"
+                    + "사유: " + reason;
 
             try {
                 mattermostClient.sendMessage(errorMessage);
@@ -97,8 +102,9 @@ public class AirAlertMain {
         Properties props = new Properties();
         File file = new File(CONFIG_FILE);
         if (file.exists()) {
-            try (InputStream in = new FileInputStream(file)) {
-                props.load(in);
+            try (InputStream in = new FileInputStream(file);
+                    Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
+                props.load(reader);
             } catch (IOException e) {
                 System.err.println(CONFIG_FILE + " 읽기 실패, 환경변수로 폴백합니다: " + e.getMessage());
             }

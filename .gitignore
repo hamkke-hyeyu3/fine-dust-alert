@@ -25,5 +25,5 @@ Thumbs.db
 .claude/
 
 # ── 민감정보 ──
-/air-alert/config.properties
+config.properties
 .env
