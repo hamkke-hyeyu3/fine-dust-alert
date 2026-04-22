@@ -1,24 +1,26 @@
 package com.example.airalert;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class AirAlertMain {
 
     private static final String CONFIG_FILE = "config.properties";
 
+    private static final Map<String, String> KEY_TO_ENV = new HashMap<>();
+    static {
+        KEY_TO_ENV.put("airkorea.serviceKey", "AIRKOREA_SERVICE_KEY");
+        KEY_TO_ENV.put("airkorea.stationName", "AIRKOREA_STATION_NAME");
+        KEY_TO_ENV.put("mattermost.webhookUrl", "MATTERMOST_WEBHOOK_URL");
+    }
+
     public static void main(String[] args) {
-        Properties config;
-        try {
-            config = loadConfig();
-        } catch (IOException e) {
-            System.err.println("설정 파일(" + CONFIG_FILE + ")을 읽을 수 없습니다. "
-                    + "config.properties.example 파일을 참고해 config.properties를 만들어 주세요.");
-            e.printStackTrace();
-            return;
-        }
+        Properties config = loadConfig();
 
         String serviceKey = requireProperty(config, "airkorea.serviceKey");
         String stationName = requireProperty(config, "airkorea.stationName");
@@ -91,10 +93,15 @@ public class AirAlertMain {
         return "🚨 공기가 너무 매워! 오늘은 꼭꼭 숨어있자!";
     }
 
-    private static Properties loadConfig() throws IOException {
+    private static Properties loadConfig() {
         Properties props = new Properties();
-        try (InputStream in = new FileInputStream(CONFIG_FILE)) {
-            props.load(in);
+        File file = new File(CONFIG_FILE);
+        if (file.exists()) {
+            try (InputStream in = new FileInputStream(file)) {
+                props.load(in);
+            } catch (IOException e) {
+                System.err.println(CONFIG_FILE + " 읽기 실패, 환경변수로 폴백합니다: " + e.getMessage());
+            }
         }
         return props;
     }
@@ -102,8 +109,15 @@ public class AirAlertMain {
     private static String requireProperty(Properties props, String key) {
         String value = props.getProperty(key);
         if (value == null || value.trim().isEmpty()) {
+            String envName = KEY_TO_ENV.get(key);
+            if (envName != null) {
+                value = System.getenv(envName);
+            }
+        }
+        if (value == null || value.trim().isEmpty()) {
             throw new IllegalStateException(
-                    "필수 설정값이 비어있습니다: " + key + " (" + CONFIG_FILE + " 확인)");
+                    "필수 설정값이 비어있습니다: " + key
+                            + " (" + CONFIG_FILE + " 또는 환경변수 " + KEY_TO_ENV.get(key) + " 확인)");
         }
         return value.trim();
     }

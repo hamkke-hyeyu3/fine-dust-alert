@@ -1,0 +1,30 @@
+name: air-alert
+
+on:
+  schedule:
+    # GitHub Actions 무료 cron 지연(최대 15-20분)을 감안해 20분 앞당김
+    - cron: '10 21 * * 0-4'   # 월-금 06:10 KST (UTC 전날 21:10)
+    - cron: '40 2 * * 1-5'    # 월-금 11:40 KST (UTC 02:40)
+    - cron: '10 8 * * 1-5'    # 월-금 17:10 KST (UTC 08:10)
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: '8'
+          cache: maven
+
+      - name: Run air-alert
+        env:
+          AIRKOREA_SERVICE_KEY: ${{ secrets.AIRKOREA_SERVICE_KEY }}
+          AIRKOREA_STATION_NAME: ${{ secrets.AIRKOREA_STATION_NAME }}
+          MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
+        run: mvn -B -q compile exec:java
