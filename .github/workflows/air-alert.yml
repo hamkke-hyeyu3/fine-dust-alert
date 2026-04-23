@@ -3,9 +3,9 @@ name: air-alert
 on:
   schedule:
     # GitHub Actions 무료 cron 지연(최대 15-20분)을 감안해 20분 앞당김
-    - cron: '10 21 * * 0-4'   # 월-금 06:10 KST (UTC 전날 21:10)
-    - cron: '40 2 * * 1-5'    # 월-금 11:40 KST (UTC 02:40)
-    - cron: '10 8 * * 1-5'    # 월-금 17:10 KST (UTC 08:10)
+    - cron: '00 22 * * 0-4'   # 월-금 07:00 KST (UTC 전날 22:00)
+    - cron: '00 1 * * 1-5'    # 월-금 10:00 KST (UTC 01:00)
+    - cron: '30 7 * * 1-5'    # 월-금 16:30 KST (UTC 07:30)
   workflow_dispatch: {}
 
 jobs:
